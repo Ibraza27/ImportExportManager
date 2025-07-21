@@ -1,0 +1,385 @@
+<!-- Page de gestion des marchandises -->
+<div class="container-fluid">
+    <!-- En-tête avec statistiques -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary filter-status-btn active" data-status="all">
+                    Toutes <span class="badge bg-primary ms-1" id="stat-total-marchandises">0</span>
+                </button>
+                <button type="button" class="btn btn-outline-warning filter-status-btn" data-status="en_attente">
+                    En attente <span class="badge bg-warning ms-1" id="stat-waiting">0</span>
+                </button>
+                <button type="button" class="btn btn-outline-success filter-status-btn" data-status="affecte">
+                    Affectées <span class="badge bg-success ms-1" id="stat-assigned">0</span>
+                </button>
+                <button type="button" class="btn btn-outline-info filter-status-btn" data-status="en_transit">
+                    En transit <span class="badge bg-info ms-1" id="stat-intransit">0</span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary filter-status-btn" data-status="livre">
+                    Livrées <span class="badge bg-secondary ms-1" id="stat-delivered">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'outils -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="search-marchandise" 
+                               placeholder="Rechercher (code, désignation, client)...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="filter-type">
+                        <option value="">Tous les types</option>
+                        <option value="colis">Colis</option>
+                        <option value="vehicule">Véhicule</option>
+                        <option value="palette">Palette</option>
+                        <option value="autre">Autre</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="filter-etat">
+                        <option value="">Tous les états</option>
+                        <option value="bon_etat">Bon état</option>
+                        <option value="endommage">Endommagé</option>
+                        <option value="fragile">Fragile</option>
+                        <option value="manquant">Manquant</option>
+                    </select>
+                </div>
+                <div class="col-md-5 text-end">
+                    <button class="btn btn-warning" id="btn-scan-marchandise">
+                        <i class="fas fa-barcode me-2"></i>Scanner
+                    </button>
+                    <button class="btn btn-primary" id="btn-new-marchandise">
+                        <i class="fas fa-plus me-2"></i>Nouvelle Marchandise
+                    </button>
+                    <button class="btn btn-secondary" id="btn-refresh">
+                        <i class="fas fa-sync me-2"></i>Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des marchandises -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="marchandises-table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Code-barres</th>
+                            <th>Date réception</th>
+                            <th>Client</th>
+                            <th>Désignation</th>
+                            <th>Type</th>
+                            <th>Nb Colis</th>
+                            <th>État</th>
+                            <th>Statut</th>
+                            <th>Conteneur</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les données seront chargées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nouvelle/Éditer Marchandise -->
+<div class="modal fade" id="marchandise-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="marchandise-modal-title">Nouvelle Marchandise</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="marchandise-form">
+                <div class="modal-body">
+                    <input type="hidden" id="marchandise-id">
+                    
+                    <!-- Informations de base -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Code-barres</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="code_barre" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="btn-generate-barcode">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Client <span class="text-danger">*</span></label>
+                            <select class="form-select" id="select-client" required style="width: 100%">
+                                <option value="">Sélectionner un client...</option>
+                            </select>
+                            <div class="invalid-feedback">Le client est obligatoire</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Date de réception</label>
+                            <input type="date" class="form-control" id="date_reception" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Mode de réception et état -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Mode de réception</label>
+                            <select class="form-select" id="mode_reception">
+                                <option value="depot_client">Dépôt client</option>
+                                <option value="poste">Poste</option>
+                                <option value="coursier">Coursier</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="tracking-number-group" style="display: none;">
+                            <label class="form-label">Numéro de suivi</label>
+                            <input type="text" class="form-control" id="tracking_number">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">État à la réception</label>
+                            <select class="form-select" id="etat_reception">
+                                <option value="bon_etat">Bon état</option>
+                                <option value="endommage">Endommagé</option>
+                                <option value="fragile">Fragile</option>
+                                <option value="manquant">Manquant</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Type et désignation -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="type_marchandise" required>
+                                <option value="">Sélectionner...</option>
+                                <option value="colis">Colis</option>
+                                <option value="vehicule">Véhicule</option>
+                                <option value="palette">Palette</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                            <div class="invalid-feedback">Le type est obligatoire</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Désignation <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="designation" required
+                                   placeholder="Ex: Cartons de vêtements, Moto Yamaha, etc.">
+                            <div class="invalid-feedback">La désignation est obligatoire</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Nombre de colis</label>
+                            <input type="number" class="form-control" id="nombre_colis" value="1" min="1">
+                        </div>
+                    </div>
+                    
+                    <!-- Description détaillée -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Description détaillée</label>
+                            <textarea class="form-control" id="description_detaillee" rows="2"
+                                      placeholder="Informations complémentaires sur la marchandise"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Détails pour colis standard -->
+                    <div id="package-details">
+                        <h6 class="mb-3">Dimensions et poids</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Poids (kg)</label>
+                                <input type="number" class="form-control" id="poids" step="0.1" min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Longueur (cm)</label>
+                                <input type="number" class="form-control" id="longueur" step="1" min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Largeur (cm)</label>
+                                <input type="number" class="form-control" id="largeur" step="1" min="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Hauteur (cm)</label>
+                                <input type="number" class="form-control" id="hauteur" step="1" min="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Volume (m³)</label>
+                                <input type="number" class="form-control" id="volume" step="0.001" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Détails pour véhicules -->
+                    <div id="vehicle-details" style="display: none;">
+                        <h6 class="mb-3">Informations véhicule</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Marque</label>
+                                <input type="text" class="form-control" id="vehicle_marque">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Modèle</label>
+                                <input type="text" class="form-control" id="vehicle_modele">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Numéro de châssis</label>
+                                <input type="text" class="form-control" id="vehicle_chassis">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Valeur et stockage -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Valeur déclarée (€)</label>
+                            <input type="number" class="form-control" id="valeur_declaree" step="0.01" min="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Emplacement de stockage</label>
+                            <input type="text" class="form-control" id="emplacement_stockage" 
+                                   placeholder="Ex: Zone A, Étagère 3">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Photos (max 5)</label>
+                            <input type="file" class="form-control" id="photos" accept="image/*" multiple>
+                        </div>
+                    </div>
+                    
+                    <!-- Aperçu des photos -->
+                    <div class="row" id="photos-preview">
+                        <!-- Les aperçus seront ajoutés ici -->
+                    </div>
+                    
+                    <!-- Commentaires -->
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="form-label">Commentaires</label>
+                            <textarea class="form-control" id="commentaires" rows="2" 
+                                      placeholder="Notes internes sur la marchandise"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Affectation Conteneur -->
+<div class="modal fade" id="assign-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Affecter à un conteneur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="assign-form">
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Vous allez affecter : <strong id="assign-marchandise-name"></strong>
+                    </div>
+                    
+                    <h6 class="mb-3">Sélectionnez un conteneur</h6>
+                    <div id="containers-list">
+                        <!-- Liste des conteneurs chargée dynamiquement -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-link me-2"></i>Affecter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Scanner -->
+<div class="modal fade" id="scanner-modal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scanner de codes-barres</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" 
+                        onclick="marchandisesModule.toggleScanner(false)"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div id="scanner-preview" style="width: 100%; max-width: 640px; margin: 0 auto;">
+                        <!-- Aperçu de la caméra -->
+                    </div>
+                    <p class="mt-3 text-muted">
+                        Placez le code-barres dans le cadre pour le scanner automatiquement
+                    </p>
+                </div>
+                
+                <div class="mt-4">
+                    <label class="form-label">Ou entrez le code manuellement :</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="manual-barcode" 
+                               placeholder="Entrez le code-barres">
+                        <button class="btn btn-primary" type="button" 
+                                onclick="marchandisesModule.searchByBarcode($('#manual-barcode').val())">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques à la page marchandises */
+.filter-status-btn.active {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+#scanner-preview {
+    position: relative;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    min-height: 300px;
+    background: #f8f9fa;
+}
+
+#scanner-preview video {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+#photos-preview img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.container-option {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.container-option:hover {
+    background-color: var(--bs-light);
+    transform: translateX(5px);
+}
+</style>

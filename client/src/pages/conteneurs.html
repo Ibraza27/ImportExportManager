@@ -1,0 +1,393 @@
+<!-- Page de gestion des conteneurs -->
+<div class="container-fluid">
+    <!-- En-tête avec vue rapide -->
+    <div class="row mb-4">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary view-btn active" data-view="active">
+                        <i class="fas fa-box-open me-2"></i>Actifs
+                        <span class="badge bg-primary ms-1" id="stat-open">0</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary view-btn" data-view="closed">
+                        <i class="fas fa-lock me-2"></i>Clôturés
+                        <span class="badge bg-secondary ms-1" id="stat-closed">0</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-info view-btn" data-view="all">
+                        <i class="fas fa-list me-2"></i>Tous
+                        <span class="badge bg-info ms-1" id="stat-total">0</span>
+                    </button>
+                </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques à la page conteneurs */
+.view-btn.active {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.view-btn .badge {
+    transition: all 0.3s ease;
+}
+
+.progress {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.progress:hover {
+    transform: scale(1.05);
+}
+
+#capacity-display {
+    font-size: 1.1rem;
+    color: var(--bs-info);
+}
+
+.table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#manifest-table {
+    font-size: 0.875rem;
+}
+
+/* Animation pour les badges de statut */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.badge.bg-warning {
+    animation: pulse 2s infinite;
+}
+
+/* Styles d'impression */
+@media print {
+    .modal-header, .modal-footer {
+        display: none;
+    }
+    
+    .modal-content {
+        border: none;
+        box-shadow: none;
+    }
+    
+    .table {
+        font-size: 10pt;
+    }
+}
+</style>
+                
+                <div class="d-flex gap-2">
+                    <span class="badge bg-warning p-2">
+                        <i class="fas fa-cog me-1"></i>En préparation: <span id="stat-preparing">0</span>
+                    </span>
+                    <span class="badge bg-info p-2">
+                        <i class="fas fa-ship me-1"></i>En transit: <span id="stat-transit">0</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'outils -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="search-conteneur" 
+                               placeholder="Rechercher un conteneur (numéro, destination)...">
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-primary" id="btn-new-conteneur">
+                        <i class="fas fa-plus me-2"></i>Nouveau Conteneur
+                    </button>
+                    <button class="btn btn-secondary" id="btn-refresh">
+                        <i class="fas fa-sync me-2"></i>Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des conteneurs -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="conteneurs-table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>N° Conteneur</th>
+                            <th>Destination</th>
+                            <th>Type</th>
+                            <th>Départ prévu</th>
+                            <th>Remplissage</th>
+                            <th>Colis</th>
+                            <th>Clients</th>
+                            <th>À payer</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les données seront chargées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nouveau/Éditer Conteneur -->
+<div class="modal fade" id="conteneur-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="conteneur-modal-title">Nouveau Conteneur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Informations générales -->
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-3">Informations générales</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold">Destination:</td>
+                                <td class="conteneur-destination"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Type d'envoi:</td>
+                                <td class="conteneur-type"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Statut:</td>
+                                <td class="conteneur-status"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Date départ:</td>
+                                <td class="conteneur-depart"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Date arrivée:</td>
+                                <td class="conteneur-arrivee"></td>
+                            </tr>
+                        </table>
+                        
+                        <h6 class="text-muted mb-3 mt-4">Capacités</h6>
+                        <div class="capacity-volume mb-3"></div>
+                        <div class="capacity-weight"></div>
+                    </div>
+                    
+                    <!-- Informations financières -->
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-3">Informations financières</h6>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Total à payer:</span>
+                                    <strong class="finance-total">0 €</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Total payé:</span>
+                                    <strong class="text-success finance-paid">0 €</strong>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <span>Reste à payer:</span>
+                                    <strong class="finance-remaining">0 €</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <canvas id="finance-chart" width="200" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Manifeste -->
+                <h6 class="text-muted mb-3 mt-4">Manifeste des marchandises</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm" id="manifest-table">
+                        <thead>
+                            <tr>
+                                <th>Code-barres</th>
+                                <th>Client</th>
+                                <th>Désignation</th>
+                                <th>Nb Colis</th>
+                                <th>Poids</th>
+                                <th>Volume</th>
+                                <th>Montant</th>
+                                <th>Payé</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Données chargées dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-edit">
+                    <i class="fas fa-edit me-2"></i>Modifier
+                </button>
+                <button type="button" class="btn btn-secondary btn-print">
+                    <i class="fas fa-print me-2"></i>Imprimer
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div><form id="conteneur-form">
+                <div class="modal-body">
+                    <input type="hidden" id="conteneur-id">
+                    
+                    <!-- Informations de base -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Numéro de conteneur <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="numero_conteneur" required 
+                                       pattern="[A-Z]{4}[0-9]{7}" placeholder="XXXX1234567">
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="conteneursModule.generateNumero()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">Format invalide (4 lettres + 7 chiffres)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Date d'ouverture</label>
+                            <input type="date" class="form-control" id="date_ouverture" readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Destination -->
+                    <h6 class="mb-3">Destination</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label">Destination populaire</label>
+                            <select class="form-select" id="popular-destinations">
+                                <option value="">Sélectionner une destination populaire...</option>
+                                <!-- Options chargées dynamiquement -->
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Port <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="destination_port" required
+                                   placeholder="Ex: Le Havre">
+                            <div class="invalid-feedback">Le port est obligatoire</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Ville <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="destination_ville" required
+                                   placeholder="Ex: Paris">
+                            <div class="invalid-feedback">La ville est obligatoire</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Pays <span class="text-danger">*</span></label>
+                            <select class="form-select" id="destination_pays" required style="width: 100%">
+                                <option value="">Sélectionner...</option>
+                                <option value="France">France</option>
+                                <option value="Belgique">Belgique</option>
+                                <option value="Pays-Bas">Pays-Bas</option>
+                                <option value="Allemagne">Allemagne</option>
+                                <option value="Espagne">Espagne</option>
+                                <option value="Italie">Italie</option>
+                                <option value="Maroc">Maroc</option>
+                                <option value="Algérie">Algérie</option>
+                                <option value="Tunisie">Tunisie</option>
+                                <option value="Sénégal">Sénégal</option>
+                                <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                                <option value="Cameroun">Cameroun</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                            <div class="invalid-feedback">Le pays est obligatoire</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Type d'envoi et dates -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Type d'envoi</label>
+                            <select class="form-select" id="type_envoi">
+                                <option value="simple_envoi">Simple envoi</option>
+                                <option value="avec_dedouanement">Avec dédouanement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Date de départ prévue</label>
+                            <input type="date" class="form-control" id="date_depart_prevue">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Date d'arrivée prévue</label>
+                            <input type="date" class="form-control" id="date_arrivee_prevue">
+                            <div class="invalid-feedback">Doit être après la date de départ</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Capacités -->
+                    <h6 class="mb-3">Capacités du conteneur</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Capacité volume total (m³)</label>
+                            <input type="number" class="form-control" id="capacite_volume_total" 
+                                   step="0.1" min="0" value="33">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Capacité poids total (kg)</label>
+                            <input type="number" class="form-control" id="capacite_poids_total" 
+                                   step="1" min="0" value="28000">
+                        </div>
+                    </div>
+                    <div id="capacity-display" class="text-center mb-3"></div>
+                    
+                    <!-- Coûts -->
+                    <h6 class="mb-3">Coûts</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Coût transport (€)</label>
+                            <input type="number" class="form-control" id="cout_transport" 
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="col-md-4" id="customs-section" style="display: none;">
+                            <label class="form-label">Coût dédouanement (€)</label>
+                            <input type="number" class="form-control" id="cout_dedouanement" 
+                                   step="0.01" min="0" value="0">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Coût total (€)</label>
+                            <input type="number" class="form-control" id="cout_total" 
+                                   step="0.01" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Détails Conteneur -->
+<div class="modal fade" id="conteneur-details-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Détails du conteneur - <span class="conteneur-number"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>

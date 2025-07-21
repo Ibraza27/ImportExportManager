@@ -1,0 +1,492 @@
+<!-- Page de gestion des clients -->
+<div class="container-fluid">
+    <!-- En-tête avec statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Total Clients</h6>
+                            <h3 class="mb-0" id="stat-total-clients">0</h3>
+                        </div>
+                        <i class="fas fa-users fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Clients Actifs</h6>
+                            <h3 class="mb-0" id="stat-active-clients">0</h3>
+                        </div>
+                        <i class="fas fa-user-check fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Clients Inactifs</h6>
+                            <h3 class="mb-0" id="stat-inactive-clients">0</h3>
+                        </div>
+                        <i class="fas fa-user-clock fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Clients Suspendus</h6>
+                            <h3 class="mb-0" id="stat-suspended-clients">0</h3>
+                        </div>
+                        <i class="fas fa-user-slash fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barre d'outils -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="search-client" 
+                               placeholder="Rechercher un client...">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="filter-status">
+                        <option value="">Tous les statuts</option>
+                        <option value="actif">Actif</option>
+                        <option value="inactif">Inactif</option>
+                        <option value="suspendu">Suspendu</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" id="filter-city">
+                        <option value="">Toutes les villes</option>
+                    </select>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-primary" id="btn-new-client">
+                        <i class="fas fa-plus me-2"></i>Nouveau Client
+                    </button>
+                    <button class="btn btn-secondary" id="btn-refresh">
+                        <i class="fas fa-sync me-2"></i>Actualiser
+                    </button>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary" id="btn-import">
+                            <i class="fas fa-upload me-2"></i>Importer
+                        </button>
+                        <button class="btn btn-outline-secondary" id="btn-export">
+                            <i class="fas fa-download me-2"></i>Exporter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des clients -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="clients-table" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Téléphone</th>
+                            <th>Email</th>
+                            <th>Ville</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les données seront chargées dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nouveau/Éditer Client -->
+<div class="modal fade" id="client-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="client-modal-title">Nouveau Client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="client-form">
+                <div class="modal-body">
+                    <input type="hidden" id="client-id">
+                    
+                    <!-- Informations de base -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Code Client</label>
+                            <input type="text" class="form-control" id="code_client" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" id="type_client">
+                                <option value="particulier">Particulier</option>
+                                <option value="entreprise">Entreprise</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Statut</label>
+                            <select class="form-select" id="statut">
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
+                                <option value="suspendu">Suspendu</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Identité -->
+                    <h6 class="mb-3">Informations personnelles</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nom" required>
+                            <div class="invalid-feedback">Le nom est obligatoire</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Prénom <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="prenom" required>
+                            <div class="invalid-feedback">Le prénom est obligatoire</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contact -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Téléphone principal <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="telephone_principal" required>
+                            <div class="invalid-feedback">Numéro de téléphone invalide</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Téléphone secondaire</label>
+                            <input type="tel" class="form-control" id="telephone_secondaire">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email">
+                            <div class="invalid-feedback">Email invalide</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Adresse principale -->
+                    <h6 class="mb-3">Adresse principale</h6>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="form-label">Adresse <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="adresse_principale" rows="2" required></textarea>
+                            <div class="invalid-feedback">L'adresse est obligatoire</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Code postal</label>
+                            <input type="text" class="form-control" id="code_postal" maxlength="5">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="ville">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Pays</label>
+                            <select class="form-select" id="pays">
+                                <option value="France">France</option>
+                                <option value="Belgique">Belgique</option>
+                                <option value="Suisse">Suisse</option>
+                                <option value="Maroc">Maroc</option>
+                                <option value="Algérie">Algérie</option>
+                                <option value="Tunisie">Tunisie</option>
+                                <option value="Sénégal">Sénégal</option>
+                                <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                                <option value="Autre">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Adresse de livraison -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="same-delivery-address" checked>
+                        <label class="form-check-label" for="same-delivery-address">
+                            L'adresse de livraison est identique à l'adresse principale
+                        </label>
+                    </div>
+                    <div id="delivery-address-group" style="display: none;">
+                        <h6 class="mb-3">Adresse de livraison</h6>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <textarea class="form-control" id="adresse_livraison" rows="3" 
+                                          placeholder="Adresse complète de livraison"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informations complémentaires -->
+                    <h6 class="mb-3">Informations complémentaires</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">N° d'entreprise (si applicable)</label>
+                            <input type="text" class="form-control" id="numero_entreprise">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Photo pièce d'identité</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="photo_identite" accept="image/*">
+                                <button class="btn btn-outline-secondary" type="button" id="btn-scan-id">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label class="form-label">Commentaires</label>
+                            <textarea class="form-control" id="commentaires" rows="3" 
+                                      placeholder="Notes internes sur le client"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Détails Client -->
+<div class="modal fade" id="client-details-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails du client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="client-name mb-1"></h4>
+                        <p class="text-muted mb-3">Code: <span class="client-code"></span></p>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Téléphone:</strong>
+                                <p class="client-phone mb-1"></p>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Email:</strong>
+                                <p class="client-email mb-1"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Adresse:</strong>
+                            <p class="client-address mb-1"></p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Statut:</strong>
+                            <span class="client-status"></span>
+                        </div>
+                        
+                        <div>
+                            <strong>Client depuis:</strong>
+                            <span class="client-created"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">Statistiques</h6>
+                                <div class="mb-2">
+                                    <small class="text-muted">Nombre d'envois</small>
+                                    <h5 class="mb-0 stat-shipments">0</h5>
+                                </div>
+                                <div class="mb-2">
+                                    <small class="text-muted">Volume total</small>
+                                    <h5 class="mb-0 stat-volume">0 m³</h5>
+                                </div>
+                                <div>
+                                    <small class="text-muted">Chiffre d'affaires</small>
+                                    <h5 class="mb-0 stat-revenue">0 €</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-edit">
+                    <i class="fas fa-edit me-2"></i>Modifier
+                </button>
+                <button type="button" class="btn btn-success btn-history">
+                    <i class="fas fa-history me-2"></i>Historique
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Historique Client -->
+<div class="modal fade" id="client-history-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Historique - <span class="client-name"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-shipments">
+                            <i class="fas fa-ship me-2"></i>Envois
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-payments">
+                            <i class="fas fa-euro-sign me-2"></i>Paiements
+                        </button>
+                    </li>
+                </ul>
+                
+                <!-- Tab content -->
+                <div class="tab-content">
+                    <!-- Envois -->
+                    <div class="tab-pane fade show active" id="tab-shipments">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Conteneur</th>
+                                        <th>Destination</th>
+                                        <th>Nb Colis</th>
+                                        <th>Statut</th>
+                                        <th>Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-shipments">
+                                    <!-- Données chargées dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Paiements -->
+                    <div class="tab-pane fade" id="tab-payments">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>N° Reçu</th>
+                                        <th>Type</th>
+                                        <th>Mode</th>
+                                        <th>Montant</th>
+                                        <th>Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-payments">
+                                    <!-- Données chargées dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Import -->
+<div class="modal fade" id="import-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Importer des clients</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Le fichier doit être au format CSV ou Excel avec les colonnes : 
+                    nom, prénom, téléphone, email, adresse, ville
+                </div>
+                
+                <div id="import-dropzone" class="border-2 border-dashed p-5 text-center">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                    <p>Glissez votre fichier ici ou cliquez pour sélectionner</p>
+                    <input type="file" id="import-file" class="d-none" accept=".csv,.xlsx">
+                    <button class="btn btn-primary" onclick="$('#import-file').click()">
+                        Choisir un fichier
+                    </button>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="#" class="text-decoration-none">
+                        <i class="fas fa-download me-2"></i>Télécharger le modèle CSV
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques à la page clients */
+#import-dropzone {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#import-dropzone:hover,
+#import-dropzone.drag-over {
+    background-color: var(--bs-light);
+    border-color: var(--bs-primary) !important;
+}
+
+.stat-card {
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+</style>

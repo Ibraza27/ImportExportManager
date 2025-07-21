@@ -1,0 +1,49 @@
+{
+  "name": "import-export-client",
+  "version": "1.0.0",
+  "description": "Interface client Electron pour le système de gestion maritime",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "test": "jest"
+  },
+  "build": {
+    "appId": "com.votreentreprise.importexport",
+    "productName": "Import Export Manager",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/images/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": true
+    }
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "bootstrap": "^5.3.2",
+    "chart.js": "^4.5.0",
+    "datatables.net": "^1.13.7",
+    "datatables.net-bs5": "^1.13.7",
+    "electron-fetch": "^1.9.1",
+    "electron-log": "^5.0.1",
+    "flatpickr": "^4.6.13",
+    "jquery": "^3.7.1",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "quagga": "^0.6.16",
+    "select2": "^4.1.0-rc.0",
+    "socket.io-client": "^4.8.1",
+    "sweetalert2": "^11.6.13"
+  },
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^24.6.4"
+  }
+}

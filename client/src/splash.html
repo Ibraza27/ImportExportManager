@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        .splash-content {
+            text-align: center;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: #3b82f6;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h1 {
+            margin: 10px 0;
+            font-size: 24px;
+        }
+        p {
+            color: #888;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-content">
+        <div class="logo">📦</div>
+        <h1>Import Export Manager</h1>
+        <p>Système de Gestion Maritime</p>
+        <div class="spinner"></div>
+        <p>Chargement...</p>
+    </div>
+</body>
+</html>

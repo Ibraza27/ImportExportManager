@@ -1,0 +1,433 @@
+<!-- Page de gestion financière -->
+<div class="container-fluid">
+    <!-- Statistiques financières -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Chiffre d'affaires total</h6>
+                            <h3 class="mb-0" id="stat-total-revenue">0 €</h3>
+                            <small class="text-muted" id="trend-revenue">
+                                <i class="fas fa-minus"></i> 0%
+                            </small>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-chart-line text-primary fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Paiements en attente</h6>
+                            <h3 class="mb-0 text-warning" id="stat-pending-payments">0 €</h3>
+                            <small class="text-muted">À recouvrer</small>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-clock text-warning fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Montants en retard</h6>
+                            <h3 class="mb-0 text-danger" id="stat-overdue-amount">0 €</h3>
+                            <small class="text-muted">Dépassé échéance</small>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-exclamation-triangle text-danger fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-muted mb-1">Revenus du mois</h6>
+                            <h3 class="mb-0 text-success" id="stat-monthly-revenue">0 €</h3>
+                            <small class="text-muted" id="trend-payments">
+                                <i class="fas fa-minus"></i> 0%
+                            </small>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-calendar-check text-success fa-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres et actions -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary filter-btn active" data-filter="all">
+                            <i class="fas fa-list me-1"></i>Tous
+                        </button>
+                        <button type="button" class="btn btn-outline-warning filter-btn" data-filter="pending">
+                            <i class="fas fa-clock me-1"></i>En attente
+                        </button>
+                        <button type="button" class="btn btn-outline-danger filter-btn" data-filter="overdue">
+                            <i class="fas fa-exclamation me-1"></i>En retard
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="search-paiement" 
+                               placeholder="Rechercher (reçu, client, montant)...">
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-success" id="btn-new-paiement">
+                        <i class="fas fa-plus me-2"></i>Nouveau Paiement
+                    </button>
+                    <button class="btn btn-secondary" id="btn-refresh">
+                        <i class="fas fa-sync me-2"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary" id="btn-export">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Tableau des paiements -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Historique des paiements</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="paiements-table" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>N° Reçu</th>
+                                    <th>Date</th>
+                                    <th>Client</th>
+                                    <th>Conteneur</th>
+                                    <th>Type</th>
+                                    <th>Mode</th>
+                                    <th>Montant payé</th>
+                                    <th>Restant</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="col-lg-4">
+            <!-- Évolution des revenus -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Évolution des revenus</h6>
+                    <select class="form-select form-select-sm w-auto" id="period-select">
+                        <option value="week">Semaine</option>
+                        <option value="month" selected>Mois</option>
+                        <option value="year">Année</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenue-chart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Répartition par mode de paiement -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Modes de paiement</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="payment-modes-chart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nouveau/Éditer Paiement -->
+<div class="modal fade" id="paiement-modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paiement-modal-title">Nouveau Paiement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="paiement-form">
+                <div class="modal-body">
+                    <input type="hidden" id="paiement-id">
+                    
+                    <!-- Numéro de reçu -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Numéro de reçu</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="numero_recu" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="btn-generate-receipt">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Date de paiement</label>
+                            <input type="date" class="form-control" id="date_paiement" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Client et conteneur -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Client <span class="text-danger">*</span></label>
+                            <select class="form-select" id="select-client" required style="width: 100%">
+                                <option value="">Sélectionner un client...</option>
+                            </select>
+                            <div class="invalid-feedback">Le client est obligatoire</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Conteneur (optionnel)</label>
+                            <select class="form-select" id="select-conteneur">
+                                <option value="">Aucun conteneur spécifique</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Solde client -->
+                    <div class="alert alert-info" id="client-balance-info" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-4 text-center">
+                                <small class="text-muted">Total dû</small>
+                                <h5 id="client-total-due">0 €</h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <small class="text-muted">Total payé</small>
+                                <h5 id="client-total-paid">0 €</h5>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <small class="text-muted">Solde</small>
+                                <h5 id="client-balance" class="text-danger">0 €</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Type et mode de paiement -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Type de paiement</label>
+                            <select class="form-select" id="type_paiement">
+                                <option value="acompte">Acompte</option>
+                                <option value="solde">Solde</option>
+                                <option value="total" selected>Total</option>
+                                <option value="remboursement">Remboursement</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mode de paiement</label>
+                            <select class="form-select" id="mode_paiement">
+                                <option value="especes">Espèces</option>
+                                <option value="virement">Virement</option>
+                                <option value="cheque">Chèque</option>
+                                <option value="carte">Carte bancaire</option>
+                                <option value="mobile_money">Mobile Money</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Détails chèque -->
+                    <div class="row mb-3" id="cheque-details" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Numéro de chèque</label>
+                            <input type="text" class="form-control" id="numero_cheque">
+                            <div class="invalid-feedback">Le numéro de chèque est obligatoire</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Banque</label>
+                            <input type="text" class="form-control" id="banque">
+                        </div>
+                    </div>
+                    
+                    <!-- Détails virement -->
+                    <div class="row mb-3" id="virement-details" style="display: none;">
+                        <div class="col-12">
+                            <label class="form-label">Référence du virement</label>
+                            <input type="text" class="form-control" id="reference_virement">
+                        </div>
+                    </div>
+                    
+                    <!-- Montants -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Montant total dû (€) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="montant_total_du" 
+                                   step="0.01" min="0" required>
+                            <div class="invalid-feedback">Le montant dû est obligatoire</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Montant payé (€) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="montant_paye" 
+                                   step="0.01" min="0.01" required>
+                            <div class="invalid-feedback">Le montant payé doit être supérieur à 0</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Montant restant (€)</label>
+                            <input type="number" class="form-control" id="montant_restant" 
+                                   step="0.01" readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Date d'échéance et commentaires -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Date d'échéance</label>
+                            <input type="date" class="form-control" id="date_echeance">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Commentaires</label>
+                            <textarea class="form-control" id="commentaires" rows="2" 
+                                      placeholder="Notes internes sur le paiement"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Détails Paiement -->
+<div class="modal fade" id="paiement-details-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Détails du paiement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h4 class="text-primary receipt-number"></h4>
+                    <p class="text-muted payment-date"></p>
+                </div>
+                
+                <table class="table table-sm">
+                    <tr>
+                        <td class="fw-bold">Client:</td>
+                        <td class="client-name"></td>
+                    </tr>
+                    <tr class="container-info">
+                        <td class="fw-bold">Conteneur:</td>
+                        <td class="container-number"></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Type:</td>
+                        <td class="payment-type"></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Mode:</td>
+                        <td class="payment-mode"></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Montant:</td>
+                        <td class="amount-paid fw-bold text-success"></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold">Statut:</td>
+                        <td class="payment-status"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="financesModule.printReceipt(this.dataset.id)">
+                    <i class="fas fa-print me-2"></i>Imprimer
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques à la page finances */
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+#client-balance-info {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Animation pour les montants */
+.animate-value {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Style pour l'impression */
+@media print {
+    .modal-header,
+    .modal-footer,
+    .btn {
+        display: none !important;
+    }
+}
+</style>

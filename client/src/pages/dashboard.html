@@ -1,0 +1,359 @@
+<!-- Tableau de bord principal -->
+<div class="container-fluid">
+    <!-- En-tête avec date et actions -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="d-flex align-items-center">
+                <div class="me-4">
+                    <h5 class="mb-0" id="current-date">...</h5>
+                    <h2 class="mb-0" id="current-time">--:--:--</h2>
+                </div>
+                <div>
+                    <select class="form-select form-select-sm" id="period-filter">
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month" selected>Ce mois</option>
+                        <option value="year">Cette année</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-secondary" id="btn-refresh-dashboard">
+                <i class="fas fa-sync me-2"></i>Actualiser
+            </button>
+            <button class="btn btn-primary" id="btn-export-report">
+                <i class="fas fa-file-pdf me-2"></i>Rapport
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0 text-white-50">Total Clients</h6>
+                            <h2 class="mb-0" id="stat-total-clients">0</h2>
+                            <small id="trend-clients" class="text-white-50">
+                                <i class="fas fa-minus"></i> 0%
+                            </small>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-users fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-white-50">Nouveaux ce mois: </small>
+                        <span id="stat-new-clients">+0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0 text-white-50">Conteneurs Actifs</h6>
+                            <h2 class="mb-0" id="stat-active-containers">0</h2>
+                            <small id="trend-shipments" class="text-white-50">
+                                <i class="fas fa-minus"></i> 0%
+                            </small>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-ship fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-white-50">Expéditions aujourd'hui: </small>
+                        <span id="stat-shipments-today">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0 text-white-50">Revenus du mois</h6>
+                            <h2 class="mb-0" id="stat-monthly-revenue">0 €</h2>
+                            <small id="trend-revenue" class="text-white-50">
+                                <i class="fas fa-minus"></i> 0%
+                            </small>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-euro-sign fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-white-50">Objectif mensuel: </small>
+                        <span>50 000 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card stat-card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-0 text-white-50">Paiements en attente</h6>
+                            <h2 class="mb-0" id="stat-pending-payments">0 €</h2>
+                            <small class="text-white-50">
+                                <i class="fas fa-clock"></i> À recouvrer
+                            </small>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-white-50">En retard: </small>
+                        <span class="text-danger">3 clients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title mb-3">Actions rapides</h6>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-outline-primary w-100" id="quick-new-client">
+                                <i class="fas fa-user-plus me-2"></i>Nouveau Client
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-outline-success w-100" id="quick-new-shipment">
+                                <i class="fas fa-box me-2"></i>Nouvelle Marchandise
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-outline-info w-100" id="quick-new-container">
+                                <i class="fas fa-ship me-2"></i>Nouveau Conteneur
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button class="btn btn-outline-warning w-100" id="quick-scan">
+                                <i class="fas fa-barcode me-2"></i>Scanner Code-barres
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques et listes -->
+    <div class="row mb-4">
+        <!-- Graphique des revenus -->
+        <div class="col-lg-8 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Évolution des revenus</h6>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary active">Mois</button>
+                        <button type="button" class="btn btn-outline-secondary">Trimestre</button>
+                        <button type="button" class="btn btn-outline-secondary">Année</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenue-chart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients récents -->
+        <div class="col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Nouveaux clients</h6>
+                    <a href="#clients" class="text-decoration-none">Voir tous</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Nom</th>
+                                    <th>Téléphone</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-clients-list">
+                                <!-- Données chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Conteneurs en cours -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Conteneurs en préparation</h6>
+                    <a href="#conteneurs" class="text-decoration-none">Voir tous</a>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="pending-containers">
+                        <!-- Conteneurs chargés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiques d'expédition -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Expéditions cette semaine</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="shipments-chart" height="200"></canvas>
+                    <div class="row mt-3 text-center">
+                        <div class="col-4">
+                            <h5 class="mb-0" id="stat-packages-in-transit">0</h5>
+                            <small class="text-muted">Colis en transit</small>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-0" id="stat-average-filling">0%</h5>
+                            <small class="text-muted">Remplissage moyen</small>
+                        </div>
+                        <div class="col-4">
+                            <h5 class="mb-0">4</h5>
+                            <small class="text-muted">Destinations actives</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Derniers envois -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Derniers envois</h6>
+                    <a href="#marchandises" class="text-decoration-none">Voir tous</a>
+                </div>
+                <div class="card-body p-0">
+                    <div id="recent-shipments-list" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Envois chargés dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Derniers paiements -->
+        <div class="col-lg-5 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Derniers paiements</h6>
+                    <a href="#finances" class="text-decoration-none">Voir tous</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Client</th>
+                                    <th>Mode</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-payments-list">
+                                <!-- Paiements chargés dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Répartition par destination -->
+        <div class="col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Top destinations</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="destinations-chart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Styles spécifiques au dashboard */
+.stat-card {
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    opacity: 0.8;
+}
+
+.container-card {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.container-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.shipment-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.shipment-item:hover {
+    background-color: var(--bs-light);
+}
+
+#recent-shipments-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#recent-shipments-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#recent-shipments-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+#recent-shipments-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+</style>
