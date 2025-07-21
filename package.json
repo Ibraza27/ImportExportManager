@@ -1,0 +1,31 @@
+{
+  "name": "import-export-manager",
+  "version": "1.0.0",
+  "description": "Système de gestion d'import-export maritime",
+  "main": "client/main.js",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run electron\"",
+    "server": "cd server && npm start",
+    "electron": "cd client && npm start",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "test": "npm run test-server && npm run test-client",
+    "test-server": "cd server && npm test",
+    "test-client": "cd client && npm test"
+  },
+  "keywords": [
+    "import",
+    "export",
+    "maritime",
+    "conteneur",
+    "gestion"
+  ],
+  "author": "Votre Entreprise",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "winston": "^3.17.0"
+  }
+}

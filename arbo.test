@@ -1,0 +1,89 @@
+ImportExportManager/
+├── 📁 client/                    # Application Electron (Frontend)
+│   ├── 📄 main.js               # Point d'entrée Electron (gestion fenêtres)
+│   ├── 📄 preload.js            # Bridge sécurisé entre renderer et main
+│   ├── 📄 package.json          # Dépendances et scripts Electron
+│   │
+│   ├── 📁 src/                  # Code source de l'interface
+│   │   ├── 📄 index.html        # Page principale de l'application
+│   │   ├── 📄 app.js            # Logique principale de l'application
+│   │   │
+│   │   ├── 📁 modules/          # Modules fonctionnels
+│   │   │   ├── 📄 clients.js    # Gestion complète des clients
+│   │   │   ├── 📄 marchandises.js # Réception et suivi colis
+│   │   │   ├── 📄 conteneurs.js # Gestion conteneurs/dossiers
+│   │   │   ├── 📄 finances.js   # Facturation et paiements
+│   │   │   ├── 📄 scanner.js    # Interface scanner codes-barres
+│   │   │   └── 📄 rapports.js   # Génération rapports/stats
+│   │   │
+│   │   ├── 📁 components/       # Composants UI réutilisables
+│   │   │   ├── 📄 searchBar.js  # Barre recherche globale
+│   │   │   ├── 📄 dataTable.js  # Tableaux dynamiques
+│   │   │   ├── 📄 dashboard.js  # Widgets tableau de bord
+│   │   │   └── 📄 notifications.js # Système notifications
+│   │   │
+│   │   ├── 📁 styles/           # Styles CSS
+│   │   │   ├── 📄 main.css      # Styles principaux
+│   │   │   ├── 📄 dark-theme.css # Thème sombre
+│   │   │   └── 📄 components.css # Styles composants
+│   │   │
+│   │   └── 📁 utils/            # Utilitaires
+│   │       ├── 📄 api.js        # Communication avec serveur
+│   │       ├── 📄 constants.js
+│   │       ├── 📄 websocket.js  # Gestion temps réel
+│   │       ├── 📄 storage.js    # Cache local
+│   │       └── 📄 helpers.js    # Fonctions utilitaires
+│   │
+│   └── 📁 assets/               # Ressources statiques
+│       ├── 📁 images/           # Logo, icônes
+│       ├── 📁 fonts/            # Polices personnalisées
+│       └── 📁 templates/        # Templates PDF (factures, reçus)
+│
+├── 📁 server/                   # Backend Node.js
+│   ├── 📄 server.js             # Serveur Express principal
+│   ├── 📄 websocket.js          # Serveur WebSocket
+│   ├── 📄 package.json          # Dépendances serveur
+│   │
+│   ├── 📁 database/             # Gestion base de données
+│   │   ├── 📄 connection.js     # Connexion PostgreSQL
+│   │   ├── 📄 migrations/       # Scripts évolution DB
+│   │   └── 📄 schema.sql        # Structure initiale DB
+│   │
+│   ├── 📁 routes/               # Routes API REST
+│   │   ├── 📄 clients.js        # CRUD clients
+│   │   ├── 📄 marchandises.js   # CRUD marchandises
+│   │   ├── 📄 conteneurs.js     # CRUD conteneurs
+│   │   ├── 📄 finances.js       # Opérations financières
+│   │   └── 📄 auth.js           # Authentification
+│   │
+│   ├── 📁 services/             # Logique métier
+│   │   ├── 📄 barcodeService.js # Génération codes-barres
+│   │   ├── 📄 pdfService.js     # Génération PDF
+│   │   ├── 📄 backupService.js  # Sauvegardes auto
+│   │   └── 📄 auditService.js   # Journal d'audit
+│   │
+│   └── 📁 config/               # Configuration
+│       ├── 📄 database.js       # Config DB
+│       ├── 📄 app.js            # Config application
+│       └── 📄 roles.js          # Définition des rôles
+│
+├── 📁 shared/                   # Code partagé client/serveur
+│   ├── 📄 constants.js          # Constantes communes
+│   ├── 📄 validators.js         # Validation données
+│   └── 📄 types.js              # Types/interfaces
+│
+├── 📁 deployment/               # Scripts déploiement
+│   ├── 📄 install.bat           # Installation Windows
+│   ├── 📄 update.bat            # Mise à jour
+│   ├── 📄 backup.bat            # Sauvegarde manuelle
+│   └── 📄 README.md             # Guide installation
+│
+├── 📁 docs/                     # Documentation
+│   ├── 📄 USER_GUIDE.md         # Guide utilisateur
+│   ├── 📄 ADMIN_GUIDE.md        # Guide administrateur
+│   ├── 📄 API.md                # Documentation API
+│   └── 📄 ARCHITECTURE.md       # Architecture détaillée
+│
+├── 📄 .gitignore                # Fichiers à ignorer
+├── 📄 README.md                 # Documentation principale
+└── 📄 package.json              # Dépendances racine
